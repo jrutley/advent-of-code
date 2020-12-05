@@ -2,4 +2,4 @@
 
 Results for adventofcode.com  
 
-Projects are organized by year/day/part in subfolders
+Projects are organized by year/day{X}-{partY}
