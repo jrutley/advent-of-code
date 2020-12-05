@@ -1,23 +1,38 @@
 fn main() {
-    let forest = build_forest();
-    println!("Result: {}", forest)
+    let forest = build_forest(7);
+
+    let hit_counter =
+        how_many_trees(1, 1, &forest) *
+        how_many_trees(3, 1, &forest) *
+        how_many_trees(5, 1, &forest) *
+        how_many_trees(7, 1, &forest) *
+        how_many_trees(1, 2, &forest);
+
+    println!("Result: {}", hit_counter);
 }
 
-fn build_forest() -> i32 {
+fn how_many_trees(horizontal: usize, vertical: usize, forest: &Vec<String>) -> i64 {
+    let mut hit_counter = 0;
+    let mut height_counter = 0;
+    let mut width_counter = 0;
+    for height in forest {
+        if height_counter % vertical == 0 {
+            if height.chars().nth(width_counter) == Some('#') {
+                hit_counter += 1;
+            }
+            width_counter += horizontal;
+        }
+        height_counter += 1;
+    }
+    hit_counter
+}
+
+fn build_forest(max_size: usize) -> Vec<String> {
     let lines = textfilereader::read_file_by_line("input.txt");
 
     // This is pretty inefficient
     // Better to have only one "block" and iterate over it instead of making a giant graph
-    let forest = replicate_forest_until_wide_enough(3, lines);
-    let mut hit_counter = 0;
-    let mut width_counter = 0;
-    for height in &forest[..] {
-        if height.chars().nth(width_counter) == Some('#') {
-            hit_counter += 1;
-        }
-        width_counter += 3;
-    }
-    hit_counter
+    replicate_forest_until_wide_enough(max_size, lines)
 }
 
 fn get_copy_multiplier(ratio: usize, width: usize, height: usize) -> usize{
