@@ -9,7 +9,7 @@ fn main() {
     for x in 0..lines.len() {
         for y in x..lines.len() {
             if lines[x] + lines[y] == 2020 {
-                println!("{}", x * y);
+                println!("{}", lines[x] * lines[y]);
                 return;
             }
         }
