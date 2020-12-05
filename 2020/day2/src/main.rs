@@ -32,8 +32,9 @@ fn main() {
 
 fn valid_passwords(passwords: Vec<PasswordModel>) -> Vec<PasswordModel> {
     passwords.into_iter().filter(|p| {
-        let policy_char_len = p.password.chars().filter(|&c| c == p.character).collect::<Vec<char>>().len();
-        policy_char_len >= p.min && policy_char_len <= p.max
+        let min_match = p.password.chars().nth(p.min - 1).unwrap() == p.character;
+        let max_match = p.password.chars().nth(p.max - 1).unwrap() == p.character;
+        return min_match ^ max_match;
     }).collect()
 }
 
