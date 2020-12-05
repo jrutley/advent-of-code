@@ -3,3 +3,10 @@
 [[package]]
 name = "day4"
 version = "0.1.0"
+dependencies = [
+ "textfilereader",
+]
+
+[[package]]
+name = "textfilereader"
+version = "0.1.0"
