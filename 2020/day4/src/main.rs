@@ -1,3 +1,9 @@
+#[macro_use]
+extern crate lazy_static;
+
+use regex::Regex;
+use validator::{Validate}; //, ValidationError};
+
 fn main() {
     let input = textfilereader::read_file_by_line("input.txt");
     let passports = build_passports(input);
@@ -5,16 +11,34 @@ fn main() {
     println!("{}", valid.len());
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Validate)]
 struct Passport {
+    #[validate(regex = "RE_EYE_COLOUR")]
+    #[validate(regex(path = "RE_EYE_COLOUR"))]
     ecl: String,
+    #[validate(regex = "RE_PID")]
+    #[validate(regex(path = "RE_PID"))]
     pid: String,
-    eyr: String,
+    #[validate(range(min=2020,max=2030))]
+    eyr: i32,
+    #[validate(regex = "RE_HCL")]
+    #[validate(regex(path = "RE_HCL"))]
     hcl: String,
-    byr: String,
-    iyr: String,
+    #[validate(range(min=1920,max=2002))]
+    byr: i32,
+    #[validate(range(min=2010,max=2020))]
+    iyr: i32,
     cid: String,
+    #[validate(regex = "RE_VALID_HEIGHT")]
+    #[validate(regex(path = "RE_VALID_HEIGHT"))]
     hgt: String
+}
+
+lazy_static! {
+    static ref RE_HCL: Regex = Regex::new(r"^#[\da-f]{6}$").unwrap();
+    static ref RE_PID: Regex = Regex::new(r"^\d{9}$").unwrap();
+    static ref RE_EYE_COLOUR: Regex = Regex::new(r"^amb$|^blu$|^brn$|^gry$|^grn$|^hzl$|^oth$").unwrap();
+    static ref RE_VALID_HEIGHT: Regex = Regex::new(r"^1[5-8]\dcm$|^19[0-3]cm$|^59in$|^6\din$|^7[0-6]in$").unwrap();
 }
 
 impl Passport {
@@ -23,19 +47,20 @@ impl Passport {
         match field {
             "ecl" => self.ecl = v,
             "pid" => self.pid = v,
-            "eyr" => self.eyr = v,
+            "eyr" => self.eyr = value.parse::<i32>().unwrap(),
             "hcl" => self.hcl = v,
-            "byr" => self.byr = v,
-            "iyr" => self.iyr = v,
+            "byr" => self.byr = value.parse::<i32>().unwrap(),
+            "iyr" => self.iyr = value.parse::<i32>().unwrap(),
             "cid" => self.cid = v,
             "hgt" => self.hgt = v,
             _ => panic!("Couldn't parse field")
         }
     }
     fn is_valid(&self) -> bool {
-        self.ecl.len() > 0 && self.pid.len() > 0 && self.eyr.len() > 0 && self.hcl.len() > 0 && self.byr.len() > 0 && self.iyr.len() > 0
-        && self.hgt.len() > 0
-        // && self.cid.len() > 0 // cid is optional
+        match self.validate() {
+            Ok(_) => true,
+            Err(_) => false
+        }
     }
 }
 
