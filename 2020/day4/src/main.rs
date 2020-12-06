@@ -49,16 +49,11 @@ fn build_passports(input: Vec<String>) -> Vec<Passport> {
             current_passport = Passport::default();
             continue;
         }
-        let fields = line
-            .split(' ')
-            .collect::<Vec<&str>>()
-            .into_iter()
-            .map(|kv| kv.to_owned())
-            .collect::<Vec<String>>();
+        let fields: Vec<&str> = line.split(' ').collect();
 
-        for kv in fields {
-            let foo: Vec<&str> = kv.split(':').collect();
-            current_passport.update(foo[0], foo[1]);
+        for keyvalue in fields {
+            let kv: Vec<&str> = keyvalue.split(':').collect();
+            current_passport.update(kv[0], kv[1]);
         }
     }
     passports.push(current_passport);
