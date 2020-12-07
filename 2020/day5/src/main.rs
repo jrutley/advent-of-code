@@ -1,5 +1,3 @@
-// BFFBBFBLLR is incorrect!?
-
 fn main() {
     let input: Vec<String> = textfilereader::read_file_by_line("input.txt");
 
@@ -12,8 +10,6 @@ fn main() {
 
     if let Some(answer) = missing_val {
         println!("Position {}", answer);
-        let seat = convert_to_seat(answer);
-        println!("Missing entry: {}", seat);
     } else {
         println!("Couldn't find a gap")
     }
@@ -27,18 +23,6 @@ fn seats_to_id(i: &str) -> isize {
     let bin_chars = &replace_chars(i);
 
     isize::from_str_radix(bin_chars, 2).unwrap()
-}
-
-fn convert_row(x: isize) -> String {
-    let row_bin = format!("{0:07b}", x/8);
-    row_bin.chars().map(|c| if c == '0' {'F'} else {'B'}).collect()
-}
-fn convert_col(x: isize) -> String {
-    let col_bin = format!("{:03b}", x & 0x7);
-    col_bin.chars().map(|c| if c == '0' {'L'} else {'R'}).collect()
-}
-fn convert_to_seat(x: isize) -> String {
-    convert_row(x)+ &convert_col(x)
 }
 
 fn find_gap(sorted: &mut Vec<isize>) -> Option<isize> {
@@ -81,13 +65,5 @@ mod tests {
         assert_eq!(seats_to_id("FFFBBBFRRR"), 119);
         assert_eq!(seats_to_id("BBFFBBFRLL"), 820);
         assert_eq!(seats_to_id("FBFBBFFRLR"), 357);
-    }
-
-    #[test]
-    fn test_convert_id_to_seat(){
-        assert_eq!(convert_to_seat(567),"BFFFBBFRRR");
-        assert_eq!(convert_to_seat(119), "FFFBBBFRRR");
-        assert_eq!(convert_to_seat(820),"BBFFBBFRLL");
-        assert_eq!(convert_to_seat(357),"FBFBBFFRLR");
     }
 }
