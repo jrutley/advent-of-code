@@ -16,7 +16,7 @@ impl Op {
         match self.instruction {
             Instruction::NOP => (self.position + 1, 0),
             Instruction::ACC => (self.position + 1, self.value),
-            Instruction::JMP => (self.value, 0)
+            Instruction::JMP => (self.position + self.value, 0)
         }
     }
 }
