@@ -16,7 +16,7 @@ fn execute(input: Vec<String>) -> HashMap<u64, u64> {
     let regex = Regex::new(r"mem\[(\d+)\] = (\d+)").unwrap();
     for i in input {
         if i.starts_with("mask") {
-            let mask = &i[8..];
+            let mask = &i[7..];
             let pos_mask_str = mask.chars()
                 .map(|m| if m == '1' { '1'} else {'0'})
                 .collect::<String>();
@@ -80,12 +80,6 @@ mod tests {
         input_4: ("mem[5] = 16", 1044),
         input_5: ("mem[6] = 32", 1076),
     }
-        // input_6: ("mem[7] = 64", 1),
-        // input_7: ("mem[8] = 128", 1),
-        // input_8: ("mem[9] = 256", 1),
-        // input_9: ("mem[10] = 512", 1),
-        // input_10: ("mem[11] = 1024", 1),
-    // }
 
     #[test]
     fn test_sample_input() {
