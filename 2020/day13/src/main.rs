@@ -2,37 +2,25 @@ fn main() {
     let input: Vec<String> = textfilereader::read_file_by_line("input.txt");
     let schedule = &input[1];
     let buses = get_buses(schedule);
-    println!("Final count: {}", get_consecutive_times(buses));
+    let result = get_periods(buses);
+    println!("{} is the result", result);
 }
 
-fn get_buses(bus_input: &str) -> Vec<Option<i64>> {
-    bus_input.split(',').map(|i| match i.parse::<i64>() { Ok(x) => Some(x), Err(_) => None } ).collect::<Vec<Option<i64>>>()
-}
-
-fn get_consecutive_times(buses: Vec<Option<i64>>) -> i64 {
-    let mut counter: i64 = 0;
-    let bus_length: i64 = (buses.len() - 1) as i64;
-    let first_bus = buses[0].unwrap(); // We'll know right away if any input starts with x
-    let mut result = false;
-    while !result {
-        result = inner_loop(counter, bus_length, &buses);
-        counter += first_bus;
-    }
-    counter - first_bus
-}
-
-fn inner_loop(counter: i64, bus_length: i64, buses: &Vec<Option<i64>>) -> bool{
-    let mut inner = 0;
-    for i in counter..=counter+bus_length {
-        if let Some(check) = buses[inner] {
-            if i % check != 0 {
-                return false;
-            }
+fn get_periods(buses: Vec<(u64, u64)>) -> u64 {
+    let mut counter = 1;
+    let mut result = 1;
+    for (offset, bus_id) in buses {
+        while (offset + result) % bus_id != 0 {
+            result += counter;
         }
-        inner += 1;
+        counter *= bus_id;
     }
+    result
+}
 
-    true
+fn get_buses(bus_input: &str) -> Vec<(u64, u64)> {
+    bus_input.split(',').enumerate().filter(|&(_,x)| x != "x")
+        .map(|(i, x)| (i as u64, x.parse::<u64>().unwrap())).collect::<Vec<_>>()
 }
 
 #[cfg(test)]
@@ -45,7 +33,7 @@ mod tests {
             fn $name() {
                 let (schedule, expected) = $input;
                 let buses = get_buses(schedule);
-                assert_eq!(expected, get_consecutive_times(buses));
+                assert_eq!(expected, get_periods(buses));
             }
         )*
         }
